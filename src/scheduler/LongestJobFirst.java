@@ -2,17 +2,19 @@ package scheduler;
 
 import processor.Processor;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Stream;
 
-public class ShortestJobFirst {
+public class LongestJobFirst {
     private final int numberOfProcessors;
     private final HashMap<Integer, Processor> processors = new HashMap<>();
 
     private final List<Task> tasks;
 
-    public ShortestJobFirst(List<Task> tasks, HashMap<Integer, Processor> processors) {
+    public LongestJobFirst(List<Task> tasks, HashMap<Integer, Processor> processors) {
         this.processors.putAll(processors);
         this.numberOfProcessors = processors.size();
         this.tasks = tasks;
@@ -22,13 +24,6 @@ public class ShortestJobFirst {
     public void runTasks() {
         int currentProcessorNumber = 1;
         for (Task currentTask : tasks) {
-
-            // Get processor with the smallest start time
-            //processors.values().stream().min(Comparator.comparingInt(Processor::getClock)).ifPresent(processor -> {
-            //    int endTime = processor.runTask(currentTask, currentTask.getDuration());
-            //    currentTask.metaData(processor.getClock(), endTime, processor.getName());
-            //});
-
             Processor currentProcessor = processors.get(currentProcessorNumber);
             int startTime = currentProcessor.getClock();
             int taskDuration = currentTask.getDuration();
@@ -55,7 +50,6 @@ public class ShortestJobFirst {
 
     private void sortTasks() {
         // Sort tasks by duration
-        tasks.sort(Comparator.comparingInt(Task::getDuration));
+        tasks.sort(Comparator.comparingInt(Task::getDuration).reversed());
     }
-
 }

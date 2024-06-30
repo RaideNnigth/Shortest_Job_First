@@ -1,6 +1,7 @@
 // This is the main class of the project
 
 import processor.Processor;
+import scheduler.LongestJobFirst;
 import scheduler.ShortestJobFirst;
 import scheduler.Task;
 
@@ -43,8 +44,19 @@ public class Main {
         System.out.println("Tasks executed successfully.");
 
         // Output the log to a file
-        outPutLogToFile(processors);
+        outPutLogToFile(processors, "output.txt");
         System.out.println("Log written to output.txt");
+
+        // Create new Processors
+        HashMap<Integer, Processor> processors2= new HashMap<>();
+        for (int i = 0; i < numProcessors; i++) {
+            processors2.put(i + 1, new Processor(1, 1, i + 1));
+        }
+
+        LongestJobFirst scheduler2 = new LongestJobFirst(tasks, processors2);
+        scheduler2.runTasks();
+        outPutLogToFile(processors2, "output2.txt");
+
     }
 
     private static List<Task> readTasksFromFile(String filename) {
@@ -78,8 +90,8 @@ public class Main {
         return tasks;
     }
 
-    private static void outPutLogToFile(HashMap<Integer, Processor> processors) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("output.txt"))) {
+    private static void outPutLogToFile(HashMap<Integer, Processor> processors, String outputFileName) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFileName))) {
             // Print each processor tasks executed and start time and end time
             for (Processor processor : processors.values()) {
                 bw.write("Processador_" + processor.getName());
